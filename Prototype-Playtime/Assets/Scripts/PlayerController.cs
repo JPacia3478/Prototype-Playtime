@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour {
     public float jumpPower = 1.0f;
     bool grounded = true;
     bool rightFace = true;
+    bool upface = true;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -16,9 +18,6 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-        //Vector2 x = Input.GetAxis("Horizontal") * transform.right * Time.deltaTime * speed;
-        //transform.Translate(x);
-
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
             gameObject.transform.position += new Vector3(-speed, 0, 0);
@@ -26,16 +25,6 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
             gameObject.transform.position += new Vector3(speed, 0, 0);
-        }
-        if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.UpArrow))
-        {
-            Debug.Log(grounded.ToString());
-            if (grounded)
-            {
-                Rigidbody2D rb = GetComponent<Rigidbody2D>();
-                rb.AddForce(Vector3.up * jumpPower,ForceMode2D.Impulse);
-                grounded = false;
-            }
         }
         if (Input.GetAxis("Horizontal") > 0 && !rightFace)
         {
@@ -45,11 +34,41 @@ public class PlayerController : MonoBehaviour {
         {
             FlipPlayer();
         }
+        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)))
+        {
+            if (rightFace)
+            {
+                transform.Rotate(0, 0, 90f);
+            }
+            else
+            {
+                transform.Rotate(0, 0, -90f);
+            }
+        }
+        if ((Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow)))
+        {
+            if (rightFace)
+            {
+                transform.Rotate(0, 0, -90f);
+            }
+            else
+            {
+                transform.Rotate(0, 0, 90f);
+            }
+        }
+        if (Input.GetKey(KeyCode.Space))
+        {
+            if (grounded)
+            {
+                Rigidbody2D rb = GetComponent<Rigidbody2D>();
+                rb.AddForce(Vector3.up * jumpPower,ForceMode2D.Impulse);
+                grounded = false;
+            }
+        }
     }
     void OnCollisionEnter2D (Collision2D hit)
     {
         grounded = true;
-        Debug.Log("on ground");
     }
     void FlipPlayer()
     {
